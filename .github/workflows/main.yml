@@ -1,0 +1,37 @@
+name: Flask Docker CI/CD (Hardcoded)
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: amolkharat1
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Build & Push
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        push: true
+        tags: |
+          amolkharat1/flask-app:latest
+          amolkharat1/flask-app:${{ github.sha }}
+          amolkharat1/flask-app:test
+
+    - name: Confirm push
+      run: |
+        echo "✅ Image pushed to:"
+        echo "amolkharat1/flask-app:latest"
+        echo "amolkharat1/flask-app:${{ github.sha }}"
